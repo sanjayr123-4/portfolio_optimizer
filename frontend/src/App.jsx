@@ -12,56 +12,48 @@ function LiveTicker() {
   const tickerList = [
     "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "AMD",
     "NFLX", "INTC", "AVGO", "ORCL", "CRM", "ADBE", "CSCO",
-
     "JPM", "BAC", "GS", "MS", "V", "MA", "AXP",
-
     "JNJ", "PFE", "UNH", "LLY", "MRK", "ABBV",
-
     "WMT", "COST", "KO", "PEP", "MCD", "NKE", "SBUX",
-
     "XOM", "CVX", "COP", "SLB",
-
     "SPY", "QQQ", "DIA", "IWM", "VTI",
-
     "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS",
-    "SBIN.NS", "LT.NS", "BHARTIARTL.NS", "ITC.NS", "HINDUNILVR.NS",
-    "ADANIENT.NS", "TATAMOTORS.NS", "MARUTI.NS", "BAJFINANCE.NS",
-    "SUNPHARMA.NS",
-
-    "RELIANCE.BO", "TCS.BO", "INFY.BO", "HDFCBANK.BO", "ICICIBANK.BO"
+    "SBIN.NS", "LT.NS", "BHARTIARTL.NS", "ITC.NS", "TATAMOTORS.NS"
   ];
 
   const fetchLiveTape = async () => {
     try {
+      setLoading(true);
+
       const res = await fetch(
         `${API_BASE}/api/live-prices?tickers=${tickerList.join(",")}`
       );
 
       const data = await res.json();
-      console.log("Live prices:", data);
+      console.log("Live prices response:", data);
 
-      if (Array.isArray(data.prices) && data.prices.length > 0) {
-        const validPrices = data.prices
-          .filter((item) => item.price !== null && item.price !== undefined)
-          .map((item) => ({
-            symbol: item.ticker,
-            price: item.price,
-            currency:
-              item.currency ||
-              (String(item.ticker).endsWith(".BO") ||
-              String(item.ticker).endsWith(".NS")
-                ? "₹"
-                : "$"),
-            change_percent:
-              item.change_percent !== null && item.change_percent !== undefined
-                ? Number(item.change_percent)
-                : 0,
-          }));
+      const validPrices = (data.prices || [])
+  .filter((item) => Number(item.price) > 0)
+  .map((item) => ({
+    symbol: item.ticker,
+    price: Number(item.price),
+    currency:
+      item.currency ||
+      (String(item.ticker).endsWith(".NS") ||
+      String(item.ticker).endsWith(".BO")
+        ? "₹"
+        : "$"),
+    change_percent:
+      item.change_percent !== null && item.change_percent !== undefined
+        ? Number(item.change_percent)
+        : 0,
+  }));
 
-        setStocks(validPrices);
-      } else {
-        setStocks([]);
-      }
+console.log("Valid live prices:", validPrices);
+
+setStocks(validPrices);
+
+      setStocks(validPrices);
     } catch (err) {
       console.error("Live ticker error:", err);
       setStocks([]);
@@ -73,9 +65,7 @@ function LiveTicker() {
   useEffect(() => {
     fetchLiveTape();
 
-    const interval = setInterval(() => {
-      fetchLiveTape();
-    }, 15000);
+    const interval = setInterval(fetchLiveTape, 30000);
 
     return () => clearInterval(interval);
   }, []);
@@ -105,7 +95,7 @@ function LiveTicker() {
                   <span style={tickerSymbol}>{s.symbol}</span>
 
                   <span style={tickerPrice}>
-                    {s.currency || "$"}
+                    {s.currency}
                     {Number(s.price).toFixed(2)}
                   </span>
 
