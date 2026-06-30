@@ -9,17 +9,150 @@ function LiveTicker() {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const tickerList = [
-    "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "AMD",
-    "NFLX", "INTC", "AVGO", "ORCL", "CRM", "ADBE", "CSCO",
-    "JPM", "BAC", "GS", "MS", "V", "MA", "AXP",
-    "JNJ", "PFE", "UNH", "LLY", "MRK", "ABBV",
-    "WMT", "COST", "KO", "PEP", "MCD", "NKE", "SBUX",
-    "XOM", "CVX", "COP", "SLB",
-    "SPY", "QQQ", "DIA", "IWM", "VTI",
-    "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS",
-    "SBIN.NS", "LT.NS", "BHARTIARTL.NS", "ITC.NS", "TATAMOTORS.NS"
-  ];
+ const tickerList = [
+  // ===== Big Tech =====
+  "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA",
+  "AMD", "INTC", "AVGO", "QCOM", "MU", "TXN", "ARM",
+  "ASML", "LRCX", "KLAC", "AMAT", "ADI", "NXPI", "MRVL",
+  "CRM", "ORCL", "IBM", "CSCO", "ADBE", "NOW", "PANW",
+  "CRWD", "SNOW", "PLTR", "NET", "DDOG", "SHOP", "UBER",
+  "ABNB", "NFLX", "SPOT", "PYPL", "SQ", "COIN",
+
+  // ===== Defense & Aerospace =====
+  "LMT",      // Lockheed Martin
+  "RTX",      // RTX
+  "NOC",      // Northrop Grumman
+  "GD",       // General Dynamics
+  "BA",       // Boeing
+  "LHX",      // L3Harris
+  "HII",      // Huntington Ingalls
+  "TXT",      // Textron
+  "CW",       // Curtiss-Wright
+  "TDG",      // TransDigm
+  "HEI",      // HEICO
+  "KTOS",     // Kratos
+  "AVAV",     // AeroVironment
+  "MRCY",     // Mercury Systems
+  "LDOS",     // Leidos
+  "CACI",     // CACI
+  "SAIC",     // SAIC
+  "BWXT",     // BWX Technologies
+  "AXON",     // Axon
+  "HON",      // Honeywell
+  "GE",       // GE Aerospace
+  "SPR",      // Spirit AeroSystems
+  "RKLB",     // Rocket Lab
+  "ASTS",     // AST SpaceMobile
+  "IRDM",     // Iridium
+  "SPCE",     // Virgin Galactic
+
+  // ===== AI / Robotics =====
+  "SYM", "PATH", "BBAI", "AI", "SOUN", "IONQ", "RGTI", "QBTS",
+
+  // ===== Banking =====
+  "JPM", "BAC", "GS", "MS", "C", "WFC", "USB", "PNC",
+  "SCHW", "BLK", "BX", "KKR", "V", "MA", "AXP",
+
+  // ===== Healthcare =====
+  "JNJ", "PFE", "LLY", "MRK", "ABBV", "UNH", "ISRG",
+  "ABT", "SYK", "MDT", "BMY", "AMGN", "GILD", "REGN",
+
+  // ===== Consumer =====
+  "WMT", "COST", "TGT", "KO", "PEP", "MCD", "SBUX",
+  "NKE", "LOW", "HD", "PG", "CL", "EL", "DIS",
+
+  // ===== Energy =====
+  "XOM", "CVX", "COP", "SLB", "EOG", "OXY", "MPC",
+  "PSX", "VLO", "HAL", "BKR",
+
+  // ===== Industrials =====
+  "CAT", "DE", "GE", "MMM", "ETN", "PH", "EMR",
+  "HON", "CMI", "ROK", "DOV", "ITW",
+
+  // ===== Telecommunications =====
+  "TMUS", "T", "VZ", "CHTR", "CMCSA",
+
+  // ===== Automobiles =====
+  "F", "GM", "RIVN", "LCID", "NIO", "XPEV", "LI",
+
+  // ===== ETFs =====
+  "SPY", "QQQ", "DIA", "IWM", "VTI", "VOO", "IVV",
+  "XLK", "XLE", "XLF", "XLV", "SMH", "SOXX", "ITA",
+
+  // ===== Indian Large Cap =====
+  "RELIANCE.NS",
+  "TCS.NS",
+  "INFY.NS",
+  "HDFCBANK.NS",
+  "ICICIBANK.NS",
+  "SBIN.NS",
+  "LT.NS",
+  "BHARTIARTL.NS",
+  "ITC.NS",
+  "TATAMOTORS.NS",
+  "MARUTI.NS",
+  "M&M.NS",
+  "SUNPHARMA.NS",
+  "ULTRACEMCO.NS",
+  "BAJFINANCE.NS",
+  "ASIANPAINT.NS",
+  "NESTLEIND.NS",
+  "TITAN.NS",
+  "AXISBANK.NS",
+  "KOTAKBANK.NS",
+  "POWERGRID.NS",
+  "ONGC.NS",
+  "NTPC.NS",
+  "COALINDIA.NS",
+  "ADANIENT.NS",
+  "ADANIPORTS.NS",
+  "WIPRO.NS",
+  "TECHM.NS",
+  "HCLTECH.NS",
+  "JSWSTEEL.NS",
+  "TATASTEEL.NS",
+  "INDUSINDBK.NS",
+  "BAJAJFINSV.NS",
+  "DRREDDY.NS",
+  "CIPLA.NS",
+  "HINDUNILVR.NS",
+
+  // ===== Indian Defense =====
+  "HAL.NS",
+  "BEL.NS",
+  "BDL.NS",
+  "MAZDOCK.NS",
+  "COCHINSHIP.NS",
+  "GRSE.NS",
+  "PARAS.NS",
+  "DATAPATTNS.NS",
+  "ZENTECH.NS",
+  "IDEAFORGE.NS",
+  "MTARTECH.NS",
+  "BEML.NS",
+  "SOLARINDS.NS",
+  "ASTRAMICRO.NS",
+  "DCXINDIA.NS",
+  "TANEJAERO.NS",
+  "UNIMECH.NS",
+
+  // ===== Indian PSU / Infra =====
+  "IRCON.NS",
+  "RVNL.NS",
+  "IRFC.NS",
+  "NBCC.NS",
+  "NHPC.NS",
+  "SAIL.NS",
+  "NMDC.NS",
+  "IOC.NS",
+  "BPCL.NS",
+  "GAIL.NS",
+  "PFC.NS",
+  "RECLTD.NS",
+  "CONCOR.NS",
+  "RITES.NS",
+  "HUDCO.NS"
+];
 
   const fetchLiveTape = async () => {
     try {
